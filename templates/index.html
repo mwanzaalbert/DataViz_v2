@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataViz</title>
+    <!-- link href="../static/landing.css" rel="stylesheet" type="text/css"-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='landing.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to DataViz App</h1>
+        <p>Your powerful tool for data visualization and analysis.</p>
+    </header>
+    <main>
+        <section class="intro">
+            <h2>About DataViz</h2>
+            <p>DataViz provides an easy-to-use interface for uploading, analyzing, and visualizing your datasets. Whether you want to generate statistical summaries or create stunning visualizations, DataViz has you covered.</p>
+        </section>
+        <section class="features">
+            <h2>Features</h2>
+            <ul>
+                <li>Upload CSV files and preview data</li>
+                <li>Clean and sanitize data</li>
+                <li>Generate descriptive statistics</li>
+                <li>Create various types of charts and graphs</li>
+                <li>Interactive and user-friendly interface</li>
+            </ul>
+        </section>
+        <section class="cta">
+            <h2>Get Started</h2>
+            <p>Ready to dive into your data? Click the button below to access the app.</p>
+            <a href="{{ url_for('index') }}" class="button">Go to DataViz App</a>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 DataViz App. All rights reserved.</p>
+    </footer>
+</body>
+</html>

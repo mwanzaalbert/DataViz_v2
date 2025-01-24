@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DataViz App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}>
+    <! link rel="stylesheet" href="{{ url_for('static', filename='dataviz.css') }}">
+</head>
+<body>
+    <h1>DataViz App</h1>
+    <form action="/dataviz.app" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" >
+        {% if file_path %}
+        <input type="hidden" name="file_path" value="{{ file_path }}">
+        {% endif %}
+
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if df_html %}
+        <h2>Dataset Preview</h2>
+        {{ df_html | safe }}
+
+        <h3>Select a field to analyze</h3>
+        <form action="/dataviz.app/summary" method="POST">
+            <input type="hidden" name="file_path" value="{{ file_path }}">
+            <select name="field">
+                {% for field in fields %}
+                <option value="{{ field }}">{{ field }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Show Summary</button>
+        </form>
+
+        <form action="/dataviz.app/visualize" method="POST" id="visualizeForm">
+            <input type="hidden" name="file_path" value="{{ file_path }}">
+            <div id="singleFieldSelect">
+                <select name="field">
+                    {% for field in fields %}
+                    <option value="{{ field }}">{{ field }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- New div for Bar Chart Y-axis dropdown -->
+            <div id="barChartFieldSelect" style="display: none;">
+                Select Y-axis field (Bar Chart):
+                <select name="field_y">
+                    {% for field in fields %}
+                    <option value="{{ field }}">{{ field }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="doubleFieldSelect" style="display: none;">
+                <select name="field1">
+                    {% for field in fields %}
+                    <option value="{{ field }}">{{ field }}</option>
+                    {% endfor %}
+                </select>
+                vs
+                <select name="field2">
+                    {% for field in fields %}
+                    <option value="{{ field }}">{{ field }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <select name="chart_type" id="chart_type">
+                <option value="bar">Bar Chart</option>
+                <option value="line">Line Chart</option>
+                <option value="histogram">Histogram</option>
+                <option value="pie">Pie Chart</option>
+                <option value="scatter">Scatter Plot</option>
+            </select>
+            
+            <button type="submit">Visualize</button>
+        </form>
+
+        <form action="/dataviz.app/sanitize" method="POST">
+            <input type="hidden" name="file_path" value="{{ file_path }}">
+            <button type="submit">Sanitize Data</button>
+        </form>
+
+        <form action="/dataviz.app/reset" method="POST">
+            <input type="hidden" name="file_path" value="{{ file_path }}">
+            <button type="submit">Reset</button>
+        </form>
+
+        {% if summary %}
+            <h3>Summary Statistics</h3>
+            {{ summary | safe }}
+        {% endif %}
+
+        {% if plot_url %}
+            <h3>Visualization</h3>
+            <img src="data:image/png;base64,{{ plot_url }}">
+        {% endif %}
+    {% endif %}
+
+    <script>
+        const chartTypeSelect = document.getElementById('chart_type');
+        const singleFieldSelect = document.getElementById('singleFieldSelect');
+        const barChartFieldSelect = document.getElementById('barChartFieldSelect');  // New
+        const doubleFieldSelect = document.getElementById('doubleFieldSelect');
+
+        chartTypeSelect.addEventListener('change', function() {
+            if (this.value === 'line' || this.value === 'scatter') {
+                singleFieldSelect.style.display = 'none';
+                doubleFieldSelect.style.display = 'block';
+                barChartFieldSelect.style.display = 'none';  // Hide Bar chart dropdown for other types
+            } else if (this.value === 'bar') {
+                barChartFieldSelect.style.display = 'block';  // Show Bar chart Y-axis field dropdown
+                singleFieldSelect.style.display = 'block';
+                doubleFieldSelect.style.display = 'none';
+            } else {
+                barChartFieldSelect.style.display = 'none';  // Hide when not in Bar chart mode
+                singleFieldSelect.style.display = 'block';
+                doubleFieldSelect.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
